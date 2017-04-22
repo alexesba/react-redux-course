@@ -1,20 +1,40 @@
 import React, { Component, PropTypes } from "react";
-import Todo from "./Todo";
+import TodoContainer from "./TodoContainer";
+import _ from "lodash";
 
 class TodoList extends Component {
 
   static propTypes = {
-    todos: PropTypes.array.isRequired
+    todos: PropTypes.array.isRequired,
+    onAddTodo: PropTypes.func.isRequired
+  }
+
+  constructor(props){
+    super(props);
+    this.addTodo = this.addTodo.bind(this);
+    this.renderTodos = this.renderTodos.bind(this);
+  }
+
+  addTodo() {
+    const description = this.refs.todoDecription.value;
+    if (description) this.props.onAddTodo(description);
+    this.refs.todoDecription.value = '';
+  }
+
+  renderTodos() {
+    const { todos } = this.props;
+    return todos.map(todo => {
+      return <TodoContainer key={todo.id } {...todo }/>
+    });
   }
 
   render() {
-    const { todos } = this.props;
     return (
       <div>
-        <input type="text"/>
-        <button> Add Todo</button>
+        <input type="text" ref="todoDecription"/>
+        <button onClick={this.addTodo}> Add Todo</button>
         <ul>
-          { todos.map( todo  => <Todo key={todo.id} {...todo} />) }
+          { this.renderTodos() }
         </ul>
       </div>
     );

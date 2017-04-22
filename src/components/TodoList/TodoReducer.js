@@ -1,20 +1,25 @@
 import _ from "lodash";
 import {
-  ADD_TODO
+  ADD_TODO,
+  REMOVE_TODO,
 } from "./TodoActions";
 const DEFAULT_STATE = {
-  todos: [
-    {id: 0, completed: true, description: "Learn React"},
-    {id: 1, completed: false, description: "Learn React"}
-  ]
+  todos: []
 }
+
 export default (state=DEFAULT_STATE, action) => {
   switch(action.type) {
     case ADD_TODO:
-      const id = _(state.todos).map( todo => todo.id).max().value() + 1;
+      const last = _.findLast(state.todos);
+      const id = last ? last.id + 1 : 0;
       const todo = { id, description: action.description, completed: false };
       return { ...state, todos: [...state.todos, todo ] };
+
+    case REMOVE_TODO:
+      let todos = _.filter(state.todos, todo => todo.id !== action.id );
+      return { ...state, todos };
     default:
       return state;
   }
 }
+
